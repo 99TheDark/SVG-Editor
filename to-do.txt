@@ -1,4 +1,3 @@
-Don't hide nodes if one is selected
 Dragging points of ellipse/rectangle increase size
 Dragging points on shape while holding shift does from center
 Dragging points on shape while holding alt does in all directions equaly
