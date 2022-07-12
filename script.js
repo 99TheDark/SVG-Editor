@@ -5,6 +5,7 @@ var mouseShapeOffsetX, mouseShapeOffsetY;
 var selectedShape = undefined;
 var selectedNode = undefined;
 var svg = document.getElementById("svg");
+var nodeDist = 10;
 
 var key = {};
 updateKeys = function(e){
@@ -90,12 +91,11 @@ var updateNodePositions = function(shape, centerX, centerY){
 
 var updateNodes = function(){
     var totalShapes = svg.children.length;
-    
     var nodes = document.getElementById("nodes").children;
     var mouseInNodeShapeIndex = undefined;
     for(let i = 0; i < nodes.length; i++){
         var curNode = document.getElementById("nodes").children[i];
-        var inNode = distance(mouseX, mouseY, nodes[i].getAttribute("cx"), nodes[i].getAttribute("cy")) <= 10;
+        var inNode = distance(mouseX, mouseY, nodes[i].getAttribute("cx"), nodes[i].getAttribute("cy")) <= nodeDist;
         if(inNode){
             curNode.setAttribute("r", 6);
             curNode.setAttribute("stroke-width", 3);
@@ -118,7 +118,7 @@ var updateNodes = function(){
                 shape.setAttribute("height", Math.abs(nodeData.y - shapeData.y));
                 updateNodePositions(shape);
             }
-        } else {
+        } else if(!mouseDown){
             selectedNode = undefined;
         }
     }
@@ -217,7 +217,14 @@ document.onmousedown = function(){
     mouseDown = true;
     for(let i = svg.children.length; i > 0; i--){
         var curShape = document.getElementById("svg-id" + i);
-        if(mouseInShape(curShape)){
+        var inNode = false;
+        for(let j = 0; j < shapeNodes(curShape).length; j++){
+            if(distance(mouseX, mouseY, shapeNodes(curShape)[j].getAttribute("cx"), shapeNodes(curShape)[j].getAttribute("cy")) <= nodeDist){
+                inNode = true;
+                break;
+            }
+        }
+        if(mouseInShape(curShape) && !inNode){
             selectedShape = curShape;
             if(curShape.nodeName === "rect"){
                 mouseShapeOffsetX = getElementData(curShape).x - mouseX;
