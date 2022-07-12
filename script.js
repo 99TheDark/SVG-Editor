@@ -1,5 +1,5 @@
-var mouseX;
-var mouseY;
+var mouseX = 0;
+var mouseY = 0;
 var mouseDown = false;
 var size = 100;
 var mouseShapeOffsetX;
@@ -212,7 +212,6 @@ window.onkeypress = function(e){
         key = String.fromCharCode(e.which);
     }
 
-    //console.log(key);
     if (key === "r"){
         createObject("rect");
     }
