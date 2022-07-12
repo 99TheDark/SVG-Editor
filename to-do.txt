@@ -17,3 +17,4 @@ Don't select shape when inside a nodes
 
 Bugs:
 Only works when resizing bottom left, need to calc from center
+Editing one shape edits them all
