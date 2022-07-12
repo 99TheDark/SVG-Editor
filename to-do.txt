@@ -13,7 +13,6 @@ Undo/Redo
 Add lots of dropdown shadows
 Light & Dark mode
 Stop shapes from moving freely out of svg space
-Don't select shape when inside a nodes
 
 Bugs:
 Only works when resizing bottom left, need to calc from center
