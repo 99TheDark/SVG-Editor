@@ -1,23 +1,22 @@
-var mouseX;
-var mouseY;
+var mouseX, mouseY;
 var mouseDown = false;
 var size = 100;
-var mouseShapeOffsetX;
-var mouseShapeOffsetY;
+var mouseShapeOffsetX, mouseShapeOffsetY;
 var selectedShape = undefined;
+var selectedNode = undefined;
 var svg = document.getElementById("svg");
 
 var key = {};
 updateKeys = function(e){
     e = e || event;
-    key[e.key] = e.type == "keydown";
+    key[e.key.toLowerCase()] = e.type == "keydown";
 }
 
 var distance = function(x1, y1, x2, y2){
     return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 }
 
-var getElementData = function(e){
+var getElementData = function(e){ //getProperty but converts to numbers, includes everything making it compact
     var shapeData = {};
     for(let i = 0; i < e.attributes.length; i++){
         var curAttribute = e.attributes[i];
@@ -43,6 +42,11 @@ var shapeNodes = function(e){
     return allNodes;
 }
 
+var nodeShape = function(e){
+    var shapeNum = e.id.replace("svg-id", "").split("-node")[0];
+    return document.getElementById("svg-id" + shapeNum);
+}
+
 var mouseInShape = function(e){
     var inShape = false;
     var shape = getElementData(e);
@@ -54,6 +58,36 @@ var mouseInShape = function(e){
     return inShape;
 }
 
+var updateNodePositions = function(shape, centerX, centerY){
+    if(centerX === undefined || centerY === undefined){
+        centerX = shape.getAttribute("x");
+        centerY = shape.getAttribute("y");
+    }
+    for(let i = 0; i < shapeNodes(shape).length; i++){
+        shapeNodes(shape)[i].setAttribute("cx", centerX);
+        shapeNodes(shape)[i].setAttribute("cy", centerY);
+    }
+    if(shape.nodeName === "rect"){
+        var curNode = shapeNodes(shape)[1];
+        curNode.setAttribute("cx", getElementData(curNode).cx + getElementData(shape).width);
+        var curNode = shapeNodes(shape)[2];
+        curNode.setAttribute("cy", getElementData(curNode).cy + getElementData(shape).height);
+        var curNode = shapeNodes(shape)[3];
+        curNode.setAttribute("cx", getElementData(curNode).cx + getElementData(shape).width);
+        curNode.setAttribute("cy", getElementData(curNode).cy + getElementData(shape).height);
+    }
+    if(shape.nodeName === "ellipse"){
+        var curNode = shapeNodes(shape)[0];
+        curNode.setAttribute("cx", getElementData(curNode).cx - getElementData(shape).rx);
+        var curNode = shapeNodes(shape)[1];
+        curNode.setAttribute("cx", getElementData(curNode).cx + getElementData(shape).rx);
+        var curNode = shapeNodes(shape)[2];
+        curNode.setAttribute("cy", getElementData(curNode).cy - getElementData(shape).ry);
+        var curNode = shapeNodes(shape)[3];
+        curNode.setAttribute("cy", getElementData(curNode).cy + getElementData(shape).ry);
+    }
+}
+
 var updateNodes = function(){
     var totalShapes = svg.children.length;
     
@@ -61,13 +95,32 @@ var updateNodes = function(){
     var mouseInNodeShapeIndex = undefined;
     for(let i = 0; i < nodes.length; i++){
         var curNode = document.getElementById("nodes").children[i];
-        if(distance(mouseX, mouseY, nodes[i].getAttribute("cx"), nodes[i].getAttribute("cy")) <= 9){
+        var inNode = distance(mouseX, mouseY, nodes[i].getAttribute("cx"), nodes[i].getAttribute("cy")) <= 10;
+        if(inNode){
             curNode.setAttribute("r", 6);
             curNode.setAttribute("stroke-width", 3);
             mouseInNodeShapeIndex = Number(curNode.id.split("id")[1].split("-")[0]);
         } else {
             curNode.setAttribute("r", 4);
             curNode.setAttribute("stroke-width", 2);
+        }
+        if(mouseDown && (selectedShape === undefined && inNode || selectedNode !== undefined)){
+            selectedNode = curNode;
+            if(key.shift){
+                //make it extra wide and move half that extra width towards 0, 0
+            } else {
+                curNode.setAttribute("x", mouseX);
+                curNode.setAttribute("y", mouseY);
+                var shape = nodeShape(curNode);
+                var shapeData = getElementData(shape);
+                var nodeData = getElementData(curNode);
+                shape.setAttribute("width", Math.abs(nodeData.x - shapeData.x));
+                shape.setAttribute("height", Math.abs(nodeData.y - shapeData.y));
+                //update the position of all the nodes
+                updateNodePositions(shape);
+            }
+        } else {
+            selectedNode = undefined;
         }
     }
 
@@ -144,36 +197,12 @@ var updateShapePositions = function(){
         if(selectedShape.nodeName === "rect"){
             selectedShape.setAttribute("x", mouseX + mouseShapeOffsetX);
             selectedShape.setAttribute("y", mouseY + mouseShapeOffsetY);
-            for(let i = 0; i < shapeNodes(selectedShape).length; i++){
-                shapeNodes(selectedShape)[i].setAttribute("cx", mouseX + mouseShapeOffsetX);
-                shapeNodes(selectedShape)[i].setAttribute("cy", mouseY + mouseShapeOffsetY);
-            }
-            
-            var curNode = shapeNodes(selectedShape)[1];
-            curNode.setAttribute("cx", getElementData(curNode).cx + getElementData(selectedShape).width);
-            var curNode = shapeNodes(selectedShape)[2];
-            curNode.setAttribute("cy", getElementData(curNode).cy + getElementData(selectedShape).height);
-            var curNode = shapeNodes(selectedShape)[3];
-            curNode.setAttribute("cx", getElementData(curNode).cx + getElementData(selectedShape).width);
-            curNode.setAttribute("cy", getElementData(curNode).cy + getElementData(selectedShape).height);
         }
         if(selectedShape.nodeName === "ellipse"){
             selectedShape.setAttribute("cx", mouseX + mouseShapeOffsetX);
             selectedShape.setAttribute("cy", mouseY + mouseShapeOffsetY);
-            for(let i = 0; i < shapeNodes(selectedShape).length; i++){
-                shapeNodes(selectedShape)[i].setAttribute("cx", mouseX + mouseShapeOffsetX);
-                shapeNodes(selectedShape)[i].setAttribute("cy", mouseY + mouseShapeOffsetY);
-            }
-
-            var curNode = shapeNodes(selectedShape)[0];
-            curNode.setAttribute("cx", getElementData(curNode).cx - getElementData(selectedShape).rx);
-            var curNode = shapeNodes(selectedShape)[1];
-            curNode.setAttribute("cx", getElementData(curNode).cx + getElementData(selectedShape).rx);
-            var curNode = shapeNodes(selectedShape)[2];
-            curNode.setAttribute("cy", getElementData(curNode).cy - getElementData(selectedShape).ry);
-            var curNode = shapeNodes(selectedShape)[3];
-            curNode.setAttribute("cy", getElementData(curNode).cy + getElementData(selectedShape).ry);
         }
+        updateNodePositions(selectedShape, mouseX + mouseShapeOffsetX, mouseY + mouseShapeOffsetY);
     }
 }
 
