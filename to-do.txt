@@ -16,4 +16,3 @@ Light & Dark mode
 
 Bugs:
 Mouse hovers over text and interacts with stuff when dragging around svg elements offscreen
-Rectangle goes to the far left when mouse over toolbar
