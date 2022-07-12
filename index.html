@@ -9,7 +9,11 @@
 
     <!-- Link CSS & JS -->
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
+    <script>
+        var scriptEle = document.createElement("script");
+        scriptEle.src = "script.js";
+        document.head.appendChild(scriptEle);
+    </script>
 </head>
 
 <body>
