@@ -175,6 +175,7 @@ var updateShapePositions = function(){
 document.onmousemove = function(){
     mouseX = event.offsetX;
     mouseY = event.offsetY;
+    //console.log(mouseX);
     //console.log("(" + mouseX + ", " + mouseY + ")");
     updateNodes();
     updateShapePositions();
