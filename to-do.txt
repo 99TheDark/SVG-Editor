@@ -1,5 +1,4 @@
 To-Do:
-Dragging points of ellipse/rectangle increase size
 Dragging points on shape while holding shift does from center
 Dragging points on shape while holding alt does in all directions equaly
 Clicking keeps selection box and nodes showing
@@ -13,6 +12,8 @@ Add the line
 Undo/Redo
 Add lots of dropdown shadows
 Light & Dark mode
+Stop shapes from moving freely out of svg space
+Don't select shape when inside a nodes
 
 Bugs:
-Mouse hovers over text and interacts with stuff when dragging around svg elements offscreen
+Only works when resizing bottom left, need to calc from center
