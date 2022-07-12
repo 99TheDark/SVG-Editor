@@ -51,21 +51,25 @@ var mouseInShape = function(e){
 var updateNodes = function(){
     var totalShapes = document.getElementById("svg").children.length;
     
+    var mouseInNodeShapeIndex = undefined;
     for(let i = 0; i < nodes.length; i++){
         var curNode = document.getElementById("nodes").children[i];
         if(distance(mouseX, mouseY, nodes[i].x, nodes[i].y) <= 9){
             curNode.setAttribute("r", 6);
             curNode.setAttribute("stroke-width", 3);
+            if(true){
+                mouseInNodeShapeIndex = Number(curNode.id.split("id")[1].split("-")[0]);
+            }
         } else {
             curNode.setAttribute("r", 4);
             curNode.setAttribute("stroke-width", 2);
         }
     }
-    //Make it stay visible if selecting one of the nodes
+
     for(let i = 0; i < totalShapes; i++){
         var curShape = document.getElementById("svg-id" + (i + 1));
         var curShapeNodes = shapeNodes(curShape);
-        if(mouseInShape(curShape) && !mouseDown){
+        if((mouseInShape(curShape) || mouseInNodeShapeIndex === i + 1) && !mouseDown){
             for(let j = 0; j < curShapeNodes.length; j++){
                 curShapeNodes[j].setAttribute("visibility", "visible");
             }
