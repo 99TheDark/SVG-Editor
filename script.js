@@ -1,7 +1,6 @@
 var mouseX;
 var mouseY;
 var mouseDown = false;
-var nodes = [];
 var size = 100;
 var mouseShapeOffsetX;
 var mouseShapeOffsetY;
@@ -51,10 +50,11 @@ var mouseInShape = function(e){
 var updateNodes = function(){
     var totalShapes = document.getElementById("svg").children.length;
     
+    var nodes = document.getElementById("nodes").children;
     var mouseInNodeShapeIndex = undefined;
     for(let i = 0; i < nodes.length; i++){
         var curNode = document.getElementById("nodes").children[i];
-        if(distance(mouseX, mouseY, nodes[i].x, nodes[i].y) <= 9){
+        if(distance(mouseX, mouseY, nodes[i].getAttribute("cx"), nodes[i].getAttribute("cy")) <= 9){
             curNode.setAttribute("r", 6);
             curNode.setAttribute("stroke-width", 3);
             if(true){
@@ -84,7 +84,6 @@ var updateNodes = function(){
 var addNode = function(x, y){
     var nodeX = mouseX + x;
     var nodeY = mouseY + y;
-    nodes.push({x: nodeX, y: nodeY});
 
     var shapeNum = document.getElementById("svg").children.length + 1;
     var nodesChildren = document.getElementById("nodes").children;
