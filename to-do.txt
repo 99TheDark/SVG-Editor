@@ -1,0 +1,10 @@
+Don't hide nodes if one is selected
+Dragging points of ellipse/rectangle increase size
+Dragging points on shape while holding shift does from center
+Dragging points on shape while holding alt does in all directions equaly
+Make a different color dot or some sort of indicator appear when the mouse is near the edges of a rectangle (so basically inside rect+boundry/2 and not inside rect-boundry/2), same idea with ellipse
+When mouse down and near edge turn rect to polygon
+Add the line
+Color wheel/picker of sorts in top left
+Add text boxes with RGB, HSV, HEX, etc inputs (that update to the current color when color is changed)
+Undo/Redo
