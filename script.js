@@ -1,10 +1,11 @@
-var mouseX = 0;
-var mouseY = 0;
+var mouseX;
+var mouseY;
 var mouseDown = false;
 var size = 100;
 var mouseShapeOffsetX;
 var mouseShapeOffsetY;
 var selectedShape = undefined;
+var svg = document.getElementById("svg");
 
 var distance = function(x1, y1, x2, y2){
     return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
@@ -48,7 +49,7 @@ var mouseInShape = function(e){
 }
 
 var updateNodes = function(){
-    var totalShapes = document.getElementById("svg").children.length;
+    var totalShapes = svg.children.length;
     
     var nodes = document.getElementById("nodes").children;
     var mouseInNodeShapeIndex = undefined;
@@ -85,7 +86,7 @@ var addNode = function(x, y){
     var nodeX = mouseX + x;
     var nodeY = mouseY + y;
 
-    var shapeNum = document.getElementById("svg").children.length + 1;
+    var shapeNum = svg.children.length + 1;
     var nodesChildren = document.getElementById("nodes").children;
     var nodeNum = 1;
     for(let i = 0; i < nodesChildren.length; i++){
@@ -106,7 +107,7 @@ var addNode = function(x, y){
 
 var createObject = function (objectName){
     var obj = document.createElementNS("http://www.w3.org/2000/svg", objectName);
-    obj.setAttribute("id", "svg-id" + (document.getElementById("svg").children.length + 1).toString());
+    obj.setAttribute("id", "svg-id" + (svg.children.length + 1).toString());
     
     if(objectName === "rect"){
         obj.setAttribute("x", mouseX - size/2);
@@ -131,7 +132,7 @@ var createObject = function (objectName){
         addNode(0, size/2);
     }
     obj.setAttribute("fill", "#ff0000");
-    document.getElementById("svg").appendChild(obj);
+    svg.appendChild(obj);
 }
 
 var updateShapePositions = function(){
@@ -173,9 +174,8 @@ var updateShapePositions = function(){
 }
 
 document.onmousemove = function(){
-    mouseX = event.offsetX;
-    mouseY = event.offsetY;
-    //console.log(mouseX);
+    mouseX = event.clientX;
+    mouseY = event.clientY - parseInt(getComputedStyle(svg).top);
     //console.log("(" + mouseX + ", " + mouseY + ")");
     updateNodes();
     updateShapePositions();
@@ -183,7 +183,7 @@ document.onmousemove = function(){
 
 document.onmousedown = function(){
     mouseDown = true;
-    for(let i = document.getElementById("svg").children.length; i > 0; i--){
+    for(let i = svg.children.length; i > 0; i--){
         var curShape = document.getElementById("svg-id" + i);
         if(mouseInShape(curShape)){
             selectedShape = curShape;
@@ -197,6 +197,12 @@ document.onmousedown = function(){
             }
             break;
         }
+    }
+
+    if(selectedShape !== undefined){
+        document.body.style.userSelect = "none";
+    } else {
+        document.body.style.userSelect = "text";
     }
 }
 
@@ -213,16 +219,17 @@ window.onkeypress = function(e){
         key = String.fromCharCode(e.which);
     }
 
-    if (key === "r"){
-        createObject("rect");
-    }
-    if (key === "c"){
-        createObject("ellipse");
+    if(mouseX !== undefined && mouseY !== undefined){
+        if (key === "r"){
+            createObject("rect");
+        }
+        if (key === "c"){
+            createObject("ellipse");
+        }
     }
 }
 
 var download = function(){
-    var svg = document.getElementById("svg");
     var url = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg.outerHTML.toString());
     const downloadLink = document.createElement("a");
     downloadLink.href = url;
