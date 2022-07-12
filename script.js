@@ -104,7 +104,7 @@ var updateNodes = function(){
             curNode.setAttribute("r", 4);
             curNode.setAttribute("stroke-width", 2);
         }
-        if(mouseDown && inNode && (selectedShape === undefined || selectedNode !== undefined)){
+        if(mouseDown && selectedShape === undefined && (inNode || selectedNode === curNode)){
             selectedNode = curNode;
             if(key.shift){
                 //make it extra wide and move half that extra width towards 0, 0
@@ -126,7 +126,7 @@ var updateNodes = function(){
     for(let i = 0; i < totalShapes; i++){
         var curShape = document.getElementById("svg-id" + (i + 1));
         var curShapeNodes = shapeNodes(curShape);
-        if((mouseInShape(curShape) || mouseInNodeShapeIndex === i + 1) && !mouseDown){
+        if(((mouseInShape(curShape) || mouseInNodeShapeIndex === i + 1) && (!mouseDown || selectedShape === curShape || shapeNodes(curShape).includes(selectedNode)))){
             for(let j = 0; j < curShapeNodes.length; j++){
                 curShapeNodes[j].setAttribute("visibility", "visible");
             }
@@ -244,7 +244,6 @@ document.onmouseup = function(){
 }
 
 window.onkeypress = function(){
-    console.log(key);
     if(mouseX !== undefined && mouseY !== undefined){
         if (key.r){
             createObject("rect");
