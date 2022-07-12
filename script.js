@@ -104,7 +104,7 @@ var updateNodes = function(){
             curNode.setAttribute("r", 4);
             curNode.setAttribute("stroke-width", 2);
         }
-        if(mouseDown && (selectedShape === undefined && inNode || selectedNode !== undefined)){
+        if(mouseDown && inNode && (selectedShape === undefined || selectedNode !== undefined)){
             selectedNode = curNode;
             if(key.shift){
                 //make it extra wide and move half that extra width towards 0, 0
@@ -116,7 +116,6 @@ var updateNodes = function(){
                 var nodeData = getElementData(curNode);
                 shape.setAttribute("width", Math.abs(nodeData.x - shapeData.x));
                 shape.setAttribute("height", Math.abs(nodeData.y - shapeData.y));
-                //update the position of all the nodes
                 updateNodePositions(shape);
             }
         } else {
