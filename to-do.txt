@@ -1,3 +1,4 @@
+To-Do:
 Dragging points of ellipse/rectangle increase size
 Dragging points on shape while holding shift does from center
 Dragging points on shape while holding alt does in all directions equaly
@@ -8,5 +9,4 @@ Color wheel/picker of sorts in top left
 Add text boxes with RGB, HSV, HEX, etc inputs (that update to the current color when color is changed)
 Undo/Redo
 
-Bug Fix:
-nodes list with positions not updating, maybe replace the array with their actual cx cy attributes?
+Bugs:
