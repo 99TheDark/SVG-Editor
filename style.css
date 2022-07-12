@@ -1,38 +1,68 @@
+@font-face {
+    font-family: "Quicksand";
+    src: url("fonts/Quicksand/Quicksand-VariableFont_wght.ttf") format("truetype-variations");
+    font-weight: 500;
+}
+
+@media (prefers-color-scheme: light) {
+    
+}
+
+@media (prefers-color-scheme: dark) {
+    
+}
+
 body {
     margin: 0px;
     padding: 0px;
     overflow-x: hidden;
     overflow-y: hidden;
+    font-family: "Quicksand", sans-serif;
+    font-size: 20px;
 }
 
 #svg {
     position: fixed;
-    inset: 0px;
-    width: 100vw;
-    height: 100vh;
+    left: 0px;
+    top: 40px;
+    width: calc(100vw - 250px - 30px*2);
+    height: calc(100vh - 40px);
     z-index: 1;
 }
 
 #nodes {
     position: fixed;
-    inset: 0px;
-    width: 100vw;
-    height: 100vh;
+    left: 0px;
+    top: 40px;
+    width: calc(100vw - 250px - 30px*2);
+    height: calc(100vh - 40px);
     z-index: 2;
 }
 
-#tools {
+#toolbar {
     position: fixed;
-    width: 100vw;
-    height: 100vh;
-    inset: 0px;
+    width: 200px;
+    height: calc(100vh - 40px);
+    top: 40px;
+    left: 0px;
     z-index: 3;
 }
 
-#save {
+#settings-toolbar {
+    position: fixed;
+    width: 250px;
+    height: calc(100vh - 40px - 20px*2);
+    top: 40px;
+    right: 0px;
+    background-color: #dbdbdb;
+    padding: 20px 30px;
+    z-index: 3;
+}
+
+#download {
     width: 100vw;
     height: 40px;
     inset: 0px;
     font-size: 20px;
-    z-index: 4;
+    z-index: 5;
 }
