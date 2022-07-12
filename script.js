@@ -7,6 +7,12 @@ var mouseShapeOffsetY;
 var selectedShape = undefined;
 var svg = document.getElementById("svg");
 
+var key = {};
+updateKeys = function(e){
+    e = e || event;
+    key[e.key] = e.type == "keydown";
+}
+
 var distance = function(x1, y1, x2, y2){
     return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 }
@@ -58,9 +64,7 @@ var updateNodes = function(){
         if(distance(mouseX, mouseY, nodes[i].getAttribute("cx"), nodes[i].getAttribute("cy")) <= 9){
             curNode.setAttribute("r", 6);
             curNode.setAttribute("stroke-width", 3);
-            if(true){
-                mouseInNodeShapeIndex = Number(curNode.id.split("id")[1].split("-")[0]);
-            }
+            mouseInNodeShapeIndex = Number(curNode.id.split("id")[1].split("-")[0]);
         } else {
             curNode.setAttribute("r", 4);
             curNode.setAttribute("stroke-width", 2);
@@ -211,22 +215,24 @@ document.onmouseup = function(){
     selectedShape = undefined;
 }
 
-window.onkeypress = function(e){
-    var key;
-    if (window.event){
-        key = String.fromCharCode(e.keyCode);
-    } else if (e.which){
-        key = String.fromCharCode(e.which);
-    }
-
+window.onkeypress = function(){
+    console.log(key);
     if(mouseX !== undefined && mouseY !== undefined){
-        if (key === "r"){
+        if (key.r){
             createObject("rect");
         }
-        if (key === "c"){
+        if (key.c){
             createObject("ellipse");
         }
     }
+}
+
+window.onkeydown = function(){
+    updateKeys();
+}
+
+window.onkeyup = function(){
+    updateKeys();
 }
 
 var download = function(){
@@ -239,6 +245,6 @@ var download = function(){
     //Base64 image link
     /*
     var svgWindow = window.open(url);
-    svgWindow.document.write("<iframe src=\"" + url + "\" frameborder=\"0\" style=\"border: 0px; inset=0px; width: 100%; height: 100%;\" allowfullscreen></iframe>");
+    svgWindow.document.write("<iframe src=\"" + url + "\" frameborder=\"0\" style=\"border: 0px; inset: 0px; width: 100%; height: 100%;\" allowfullscreen></iframe>");
     */
 }
