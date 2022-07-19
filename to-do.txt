@@ -13,6 +13,7 @@ Undo/Redo
 Add lots of dropdown shadows
 Light & Dark mode
 Stop shapes from moving freely out of svg space
+Make ellipse resizing easier (recalculate center)
 
 Bugs:
 Resizing to "negatives" modes center point slightly in the one frame
