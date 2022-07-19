@@ -61,8 +61,14 @@ var mouseInShape = function(e){
 
 var updateNodePositions = function(shape, centerX, centerY){
     if(centerX === undefined || centerY === undefined){
-        centerX = Number(shape.getAttribute("x"));
-        centerY = Number(shape.getAttribute("y"));
+        if(shape.nodeName === "rect"){
+            centerX = Number(shape.getAttribute("x"));
+            centerY = Number(shape.getAttribute("y"));
+        }
+        if(shape.nodeName === "ellipse"){
+            centerX = Number(shape.getAttribute("cx"));
+            centerY = Number(shape.getAttribute("cy"));
+        }
     }
     for(let i = 0; i < shapeNodes(shape).length; i++){
         shapeNodes(shape)[i].setAttribute("cx", centerX);
@@ -79,13 +85,13 @@ var updateNodePositions = function(shape, centerX, centerY){
     }
     if(shape.nodeName === "ellipse"){
         var curNode = shapeNodes(shape)[0];
-        curNode.setAttribute("cx", getElementData(curNode).cx - getElementData(shape).rx);
+        curNode.setAttribute("cx", centerX - getElementData(shape).rx);
         var curNode = shapeNodes(shape)[1];
-        curNode.setAttribute("cx", getElementData(curNode).cx + getElementData(shape).rx);
+        curNode.setAttribute("cx", centerX + getElementData(shape).rx);
         var curNode = shapeNodes(shape)[2];
-        curNode.setAttribute("cy", getElementData(curNode).cy - getElementData(shape).ry);
+        curNode.setAttribute("cy", centerY - getElementData(shape).ry);
         var curNode = shapeNodes(shape)[3];
-        curNode.setAttribute("cy", getElementData(curNode).cy + getElementData(shape).ry);
+        curNode.setAttribute("cy", centerY + getElementData(shape).ry);
     }
 }
 
@@ -113,47 +119,49 @@ var updateNodes = function(){
             for(let j = 0; j < shapeNodes(shape).length; j++){
                 allNodesData.push(getElementData(shapeNodes(shape)[j]));
             }
-            if(key.shift){
-                var signX =  Math.sign(mouseX - shapeData.x);
-                var signY =  Math.sign(mouseY - shapeData.y);
-                var w = (mouseX * 2 - shapeData.x - nodeData.cx) * signX; 
-                var h = (mouseY * 2 - shapeData.y - nodeData.cy) * signY;
-                shape.setAttribute("x", mouseX - w * (signX + 1)/2);
-                shape.setAttribute("y", mouseY - h * (signY + 1)/2);
-                shape.setAttribute("width", w);
-                shape.setAttribute("height", h);
-            } else {
-                var x = mouseX; //Selected node new x
-                var y = mouseY; //Selected node new y
-                var p = shapeData.x; //Old rectangle corner x
-                var q = shapeData.y; //Old rectangle corner y
-                var m = nodeData.cx; //Selected node old x
-                var n = nodeData.cy; //Selected node old y
-                var f = Math.max(allNodesData[0].cx, allNodesData[1].cx, allNodesData[2].cx, allNodesData[3].cx); //Bottom right corner x
-                var g = Math.max(allNodesData[0].cy, allNodesData[1].cy, allNodesData[2].cy, allNodesData[3].cy); //Bottom right corner y
-                var w = f - p; //Old width
-                var h = g - q; //Old height
-                var alpha = p; //New x
-                var beta = q; //New y
-                var zeta = m - x; //Change in x
-                var xi = n - y; //Change in y
-                var sx = 1;
-                var sy = 1;
-                if(m === p){
-                    alpha = x;
-                    sx = -1;
+            if(shape.nodeName === "rect"){
+                if(key.shift){
+                    
+                } else {
+                    var x = mouseX; //Selected node new x
+                    var y = mouseY; //Selected node new y
+                    var p = shapeData.x; //Old rectangle corner x
+                    var q = shapeData.y; //Old rectangle corner y
+                    var m = nodeData.cx; //Selected node old x
+                    var n = nodeData.cy; //Selected node old y
+                    var f = Math.max(allNodesData[0].cx, allNodesData[1].cx, allNodesData[2].cx, allNodesData[3].cx); //Bottom right corner x
+                    var g = Math.max(allNodesData[0].cy, allNodesData[1].cy, allNodesData[2].cy, allNodesData[3].cy); //Bottom right corner y
+                    var w = f - p; //Old width
+                    var h = g - q; //Old height
+                    var alpha = p; //New x
+                    var beta = q; //New y
+                    var zeta = m - x; //Change in x
+                    var xi = n - y; //Change in y
+                    var sx = 1;
+                    var sy = 1;
+                    if(m === p){
+                        alpha = x;
+                        sx = -1;
+                    }
+                    if(n === q){
+                        beta = y;
+                        sy = -1;
+                    }
+                    var phi = w - zeta * sx;
+                    var psi = h - xi * sy;
+                    if(phi > 0 && psi > 0){
+                        shape.setAttribute("x", alpha);
+                        shape.setAttribute("y", beta);
+                        shape.setAttribute("width", phi);
+                        shape.setAttribute("height", psi);
+                    }
                 }
-                if(n === q){
-                    beta = y;
-                    sy = -1;
+            } else if (shape.nodeName === "ellipse"){
+                if(curNode === shapeNodes(shape)[0] || curNode === shapeNodes(shape)[1]){
+                    shape.setAttribute("rx", Math.abs(mouseX - shapeData.cx));
                 }
-                var phi = w - zeta * sx;
-                var psi = h - xi * sy;
-                if(phi > 0 && psi > 0){
-                    shape.setAttribute("x", alpha);
-                    shape.setAttribute("y", beta);
-                    shape.setAttribute("width", phi);
-                    shape.setAttribute("height", psi);
+                if(curNode === shapeNodes(shape)[2] || curNode === shapeNodes(shape)[3]){
+                    shape.setAttribute("ry", Math.abs(mouseY - shapeData.cy));
                 }
             }
             updateNodePositions(shape);
@@ -200,7 +208,7 @@ var addNode = function(x, y){
     document.getElementById("nodes").appendChild(nodeObj);
 }
 
-var createObject = function (objectName){
+var createObject = function(objectName){
     var obj = document.createElementNS("http://www.w3.org/2000/svg", objectName);
     obj.setAttribute("id", "svg-id" + (svg.children.length + 1).toString());
     
