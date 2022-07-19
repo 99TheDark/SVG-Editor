@@ -265,16 +265,13 @@ document.onmousemove = function(){
     if(mouseInCanvas){
         updateNodes();
         updateShapePositions();
-    }
-
-    if(selectedShape !== undefined || selectedNode !== undefined){
         document.body.style.userSelect = "none";
     } else {
         document.body.style.userSelect = "text";
     }
 }
 
-document.onmousedown = function(){
+window.onmousedown = function(){
     mouseDown = true;
     for(let i = svg.children.length; i > 0; i--){
         var curShape = document.getElementById("svg-id" + i);
@@ -300,12 +297,14 @@ document.onmousedown = function(){
     }
 }
 
-document.onmouseup = function(){
+window.onmouseup = function(){
     mouseDown = false;
     selectedShape = undefined;
 }
 
-window.onkeypress = function(){
+window.onkeydown = function(){
+    updateKeys();
+
     if(mouseX !== undefined && mouseY !== undefined && mouseInCanvas){
         if (key.r){
             createObject("rect");
@@ -313,11 +312,14 @@ window.onkeypress = function(){
         if (key.c){
             createObject("ellipse");
         }
+        if(key.backspace && selectedShape !== undefined){
+            var selectedShapeNodes = shapeNodes(selectedShape);
+            for(let i = 0; i < selectedShapeNodes.length; i++){
+                selectedShapeNodes[i].remove();
+            }
+            selectedShape.remove();
+        }
     }
-}
-
-window.onkeydown = function(){
-    updateKeys();
 }
 
 window.onkeyup = function(){
