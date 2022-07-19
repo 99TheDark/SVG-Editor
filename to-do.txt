@@ -11,11 +11,12 @@ When mouse down and near edge turn rect to polygon
 Add the line
 Undo/Redo
 Make ellipse resizing easier (recalculate center) - maybe while holding shift?
-Delete objects
+Update deleting objects to dashed-line selection
 Copy + paste objects
 Dashed lines when selecting object and not mouse down/moving it (<path stroke-dasharray="14, 12" d="M 5 40 l 215 0"/>) M = move to, l = line
 Add groups (<g>)
 Replace font with something less curvy and cartoony
+Add hoveredShape variable and update the delete to that
 
 Bugs:
 Resizing to "negatives" modes center point slightly in the one frame
