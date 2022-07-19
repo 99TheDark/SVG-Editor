@@ -6,6 +6,7 @@ var selectedShape = undefined;
 var selectedNode = undefined;
 var svg = document.getElementById("svg");
 var nodeDist = 10;
+var mouseInCanvas = true;
 
 var key = {};
 updateKeys = function(e){
@@ -120,19 +121,24 @@ var updateNodes = function(){
                 allNodesData.push(getElementData(shapeNodes(shape)[j]));
             }
             if(shape.nodeName === "rect"){
+                var x = mouseX; //Selected node new x
+                var y = mouseY; //Selected node new y
+                var p = shapeData.x; //Old rectangle corner x
+                var q = shapeData.y; //Old rectangle corner y
+                var m = nodeData.cx; //Selected node old x
+                var n = nodeData.cy; //Selected node old y
+                var f = Math.max(allNodesData[0].cx, allNodesData[1].cx, allNodesData[2].cx, allNodesData[3].cx); //Bottom right corner x
+                var g = Math.max(allNodesData[0].cy, allNodesData[1].cy, allNodesData[2].cy, allNodesData[3].cy); //Bottom right corner y
+                var w = f - p; //Old width
+                var h = g - q; //Old height
                 if(key.shift){
-                    
+                    var dw = Math.abs(x - m);
+                    var dh = Math.abs(y - n);
+                    shape.setAttribute("x", p - dw);
+                    shape.setAttribute("y", q - dh);
+                    shape.setAttribute("width", shapeData.width + dw * 2);
+                    shape.setAttribute("height", shapeData.height + dh * 2);
                 } else {
-                    var x = mouseX; //Selected node new x
-                    var y = mouseY; //Selected node new y
-                    var p = shapeData.x; //Old rectangle corner x
-                    var q = shapeData.y; //Old rectangle corner y
-                    var m = nodeData.cx; //Selected node old x
-                    var n = nodeData.cy; //Selected node old y
-                    var f = Math.max(allNodesData[0].cx, allNodesData[1].cx, allNodesData[2].cx, allNodesData[3].cx); //Bottom right corner x
-                    var g = Math.max(allNodesData[0].cy, allNodesData[1].cy, allNodesData[2].cy, allNodesData[3].cy); //Bottom right corner y
-                    var w = f - p; //Old width
-                    var h = g - q; //Old height
                     var alpha = p; //New x
                     var beta = q; //New y
                     var zeta = m - x; //Change in x
@@ -255,9 +261,11 @@ var updateShapePositions = function(){
 document.onmousemove = function(){
     mouseX = event.clientX;
     mouseY = event.clientY - parseInt(getComputedStyle(svg).top);
-    //console.log("(" + mouseX + ", " + mouseY + ")");
-    updateNodes();
-    updateShapePositions();
+
+    if(mouseInCanvas){
+        updateNodes();
+        updateShapePositions();
+    }
 
     if(selectedShape !== undefined || selectedNode !== undefined){
         document.body.style.userSelect = "none";
@@ -298,7 +306,7 @@ document.onmouseup = function(){
 }
 
 window.onkeypress = function(){
-    if(mouseX !== undefined && mouseY !== undefined){
+    if(mouseX !== undefined && mouseY !== undefined && mouseInCanvas){
         if (key.r){
             createObject("rect");
         }
@@ -314,6 +322,14 @@ window.onkeydown = function(){
 
 window.onkeyup = function(){
     updateKeys();
+}
+
+document.getElementById("nodes").onmouseenter = function(){
+    mouseInCanvas = true;
+}
+
+document.getElementById("nodes").onmouseleave = function(){
+    mouseInCanvas = false;
 }
 
 var download = function(){
