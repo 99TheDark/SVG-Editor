@@ -14,6 +14,10 @@ Add lots of dropdown shadows
 Light & Dark mode
 Stop shapes from moving freely out of svg space
 Make ellipse resizing easier (recalculate center)
+Delete objects
+Copy + paste objects
+Dashed lines (<path stroke-dasharray="14, 12" d="M 5 40 l 215 0"/>) M = move to, l = line
+Add groups (<g>)
 
 Bugs:
 Resizing to "negatives" modes center point slightly in the one frame
