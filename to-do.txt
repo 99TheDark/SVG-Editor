@@ -15,4 +15,4 @@ Light & Dark mode
 Stop shapes from moving freely out of svg space
 
 Bugs:
-Only works when resizing bottom left, need to calc from center
+Resizing to "negatives" modes center point slightly in the one frame
