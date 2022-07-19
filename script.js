@@ -110,7 +110,7 @@ var updateNodes = function(){
             curNode.setAttribute("r", 4);
             curNode.setAttribute("stroke-width", 2);
         }
-        if(mouseDown && selectedShape === undefined && (inNode || selectedNode === curNode)){
+        if(mouseDown && selectedShape === undefined && (selectedNode === undefined && inNode || selectedNode === curNode)){
             selectedNode = curNode;
             var shape = nodeShape(curNode);
             var shapeData = getElementData(shape);
