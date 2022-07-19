@@ -1,5 +1,5 @@
 To-Do:
-Dragging points on shape while holding shift does from center
+Dragging points on shape while holding shift does from center - WIP
 Dragging points on shape while holding alt does in all directions equaly
 Clicking keeps selection box and nodes showing
 Color selection works
@@ -10,14 +10,12 @@ Make a different color dot or some sort of indicator appear when the mouse is ne
 When mouse down and near edge turn rect to polygon
 Add the line
 Undo/Redo
-Add lots of dropdown shadows
-Light & Dark mode
-Stop shapes from moving freely out of svg space
-Make ellipse resizing easier (recalculate center)
+Make ellipse resizing easier (recalculate center) - maybe while holding shift?
 Delete objects
 Copy + paste objects
-Dashed lines (<path stroke-dasharray="14, 12" d="M 5 40 l 215 0"/>) M = move to, l = line
+Dashed lines when selecting object and not mouse down/moving it (<path stroke-dasharray="14, 12" d="M 5 40 l 215 0"/>) M = move to, l = line
 Add groups (<g>)
+Replace font with something less curvy and cartoony
 
 Bugs:
 Resizing to "negatives" modes center point slightly in the one frame
