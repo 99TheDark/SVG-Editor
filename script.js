@@ -61,8 +61,8 @@ var mouseInShape = function(e){
 
 var updateNodePositions = function(shape, centerX, centerY){
     if(centerX === undefined || centerY === undefined){
-        centerX = shape.getAttribute("x");
-        centerY = shape.getAttribute("y");
+        centerX = Number(shape.getAttribute("x"));
+        centerY = Number(shape.getAttribute("y"));
     }
     for(let i = 0; i < shapeNodes(shape).length; i++){
         shapeNodes(shape)[i].setAttribute("cx", centerX);
@@ -106,18 +106,57 @@ var updateNodes = function(){
         }
         if(mouseDown && selectedShape === undefined && (inNode || selectedNode === curNode)){
             selectedNode = curNode;
-            if(key.shift){
-                //make it extra wide and move half that extra width towards 0, 0
-            } else {
-                curNode.setAttribute("x", mouseX);
-                curNode.setAttribute("y", mouseY);
-                var shape = nodeShape(curNode);
-                var shapeData = getElementData(shape);
-                var nodeData = getElementData(curNode);
-                shape.setAttribute("width", Math.abs(nodeData.x - shapeData.x));
-                shape.setAttribute("height", Math.abs(nodeData.y - shapeData.y));
-                updateNodePositions(shape);
+            var shape = nodeShape(curNode);
+            var shapeData = getElementData(shape);
+            var nodeData = getElementData(curNode);
+            var allNodesData = [];
+            for(let j = 0; j < shapeNodes(shape).length; j++){
+                allNodesData.push(getElementData(shapeNodes(shape)[j]));
             }
+            if(key.shift){
+                var signX =  Math.sign(mouseX - shapeData.x);
+                var signY =  Math.sign(mouseY - shapeData.y);
+                var w = (mouseX * 2 - shapeData.x - nodeData.cx) * signX; 
+                var h = (mouseY * 2 - shapeData.y - nodeData.cy) * signY;
+                shape.setAttribute("x", mouseX - w * (signX + 1)/2);
+                shape.setAttribute("y", mouseY - h * (signY + 1)/2);
+                shape.setAttribute("width", w);
+                shape.setAttribute("height", h);
+            } else {
+                var x = mouseX; //Selected node new x
+                var y = mouseY; //Selected node new y
+                var p = shapeData.x; //Old rectangle corner x
+                var q = shapeData.y; //Old rectangle corner y
+                var m = nodeData.cx; //Selected node old x
+                var n = nodeData.cy; //Selected node old y
+                var f = Math.max(allNodesData[0].cx, allNodesData[1].cx, allNodesData[2].cx, allNodesData[3].cx); //Bottom right corner x
+                var g = Math.max(allNodesData[0].cy, allNodesData[1].cy, allNodesData[2].cy, allNodesData[3].cy); //Bottom right corner y
+                var w = f - p; //Old width
+                var h = g - q; //Old height
+                var alpha = p; //New x
+                var beta = q; //New y
+                var zeta = m - x; //Change in x
+                var xi = n - y; //Change in y
+                var sx = 1;
+                var sy = 1;
+                if(m === p){
+                    alpha = x;
+                    sx = -1;
+                }
+                if(n === q){
+                    beta = y;
+                    sy = -1;
+                }
+                var phi = w - zeta * sx;
+                var psi = h - xi * sy;
+                if(phi > 0 && psi > 0){
+                    shape.setAttribute("x", alpha);
+                    shape.setAttribute("y", beta);
+                    shape.setAttribute("width", phi);
+                    shape.setAttribute("height", psi);
+                }
+            }
+            updateNodePositions(shape);
         } else if(!mouseDown){
             selectedNode = undefined;
         }
@@ -211,6 +250,12 @@ document.onmousemove = function(){
     //console.log("(" + mouseX + ", " + mouseY + ")");
     updateNodes();
     updateShapePositions();
+
+    if(selectedShape !== undefined || selectedNode !== undefined){
+        document.body.style.userSelect = "none";
+    } else {
+        document.body.style.userSelect = "text";
+    }
 }
 
 document.onmousedown = function(){
@@ -236,12 +281,6 @@ document.onmousedown = function(){
             }
             break;
         }
-    }
-
-    if(selectedShape !== undefined){
-        document.body.style.userSelect = "none";
-    } else {
-        document.body.style.userSelect = "text";
     }
 }
 
